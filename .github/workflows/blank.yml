@@ -1,1 +1,0 @@
-gh workflow run blank.yml && sleep 8 && gh run watch $(gh run list --workflow=blank.yml --limit 1 --json databaseId -q '.[0].databaseId') --exit-status && gh run download -n PyIDE-debug-apk
