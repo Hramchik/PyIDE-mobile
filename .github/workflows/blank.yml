@@ -8,9 +8,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: PyIDE # <--- Указываем, что все команды run выполняются внутри папки PyIDE
 
     steps:
     - name: Checkout code
@@ -37,4 +34,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: PyIDE-debug-apk
-        path: PyIDE/app/build/outputs/apk/debug/*.apk # <--- Указываем правильный путь к APK
+        path: app/build/outputs/apk/debug/*.apk
