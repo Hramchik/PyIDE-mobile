@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: PyIDE # <--- Указываем, что все команды run выполняются внутри папки PyIDE
 
     steps:
     - name: Checkout code
@@ -25,7 +28,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
       with:
-        gradle-version: 8.9  # Используем актуальную версию
+        gradle-version: 8.9
 
     - name: Build with Gradle
       run: gradle assembleDebug
@@ -34,4 +37,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: PyIDE-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
+        path: PyIDE/app/build/outputs/apk/debug/*.apk # <--- Указываем правильный путь к APK
