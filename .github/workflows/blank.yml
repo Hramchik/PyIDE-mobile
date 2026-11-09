@@ -9,28 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Распаковать zip, если исходники в архиве
-        run: |
-          if ! find . -maxdepth 3 -name 'settings.gradle*' -not -path './.git/*' | grep -q .; then
-            for z in ./*.zip; do
-              echo "Распаковка $z"
-              unzip -o -q "$z" -d _src
-            done
-          fi
-
-      - name: Найти Gradle-проект
-        run: |
-          ls -la
-          find . -maxdepth 4 -not -path './.git/*' | sort | head -60
-          S=$(find . -maxdepth 4 \( -name 'settings.gradle.kts' -o -name 'settings.gradle' \) -not -path './.git/*' | head -1)
-          if [ -z "$S" ]; then
-            echo "::error::settings.gradle.kts не найден. Смотри дерево выше."
-            exit 1
-          fi
-          DIR=$(cd "$(dirname "$S")" && pwd)
-          echo "Gradle-проект найден: $DIR"
-          echo "PROJECT_DIR=$DIR" >> "$GITHUB_ENV"
-
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
 
@@ -38,20 +16,16 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.9"
 
       - name: Build debug APK
-        run: |
-          cd "$PROJECT_DIR"
-          gradle assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - uses: actions/upload-artifact@v4
         with:
           name: PyIDE-apk
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
